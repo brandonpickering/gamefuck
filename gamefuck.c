@@ -524,7 +524,7 @@ void game_display(void) {
   glfwPollEvents();
   memcpy(key_fstates, key_states, sizeof(key_states));
 
-  while (glfwGetTime() - frame_time < 1/30.0) ;
+  while (glfwGetTime() - frame_time < 1/60.0) ;
   frame_time = glfwGetTime();
   glfwSwapBuffers(window);
 
@@ -553,6 +553,10 @@ int game_step(context *cxt) {
   char v;
 
   switch (*cxt->ip) {
+    case 'P':
+      fprintf(stderr, "%02x %02x\n", vp_x, vp_y);
+      break;
+
     case ':':
       game_display();
       break;
