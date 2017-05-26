@@ -127,17 +127,8 @@ byte mem_get(memory *mem, size_t idx) {
 
 /* Preprocessing */
 
-char *get_input(char *source) {
-  char *p;
-  for (p = source; *p != '\0'; p++) {
-    if (*p == '!') break;
-  }
-  if (*p == '\0') return NULL;
-  *p = '\0';
-  return p+1;
-}
-
-void strip_source(char *source) {
+char *preprocess(char *source) {
+  char *inp;
   char *w, *r;
   size_t comm;
 
@@ -157,15 +148,22 @@ void strip_source(char *source) {
       continue;
     }
     if (comm != 0) continue;
-
     if (isspace(*r)) continue;
+
+    if (*r == '!') {
+      *r = '\0';
+      inp = r+1;
+      break;
+    }
     *w++ = *r;
   }
   if (comm != 0) {
     fprintf(stderr, "Error: unmatched {\n");
+    exit(1);
   }
 
   *w = '\0';
+  return inp;
 }
 
 void check_brackets(char *source) {
@@ -204,8 +202,7 @@ void cxt_init(context *cxt, char *source) {
   cxt->source = source;
   cxt->ip = cxt->source;
 
-  cxt->input = get_input(cxt->source);
-  strip_source(cxt->source);
+  cxt->input = preprocess(cxt->source);
   check_brackets(cxt->source);
 
   mem_init(&cxt->mem);
